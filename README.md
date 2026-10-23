@@ -79,10 +79,13 @@ git pull
 | 类别 | `category_id` |
 | 目标版本 | `fixed_version_id` |
 | 描述 | `description` |
+| 说明（编辑时的批注） | `notes` |
 | 完成度 | `done_ratio` |
 | 预期时间 | `estimated_hours` |
 
 自定义字段示例：`是否推广`、`测试员`、`期望测试完成时间`、`变更协同审视单号`。
+
+`notes` 来自编辑问题时的「说明」批注（`journal.notes`），只能在变更显示字段里配置用于展示，不能作为触发字段。
 
 ### 按跟踪类型配置
 

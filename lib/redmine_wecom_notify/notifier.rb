@@ -21,7 +21,8 @@ module RedmineWecomNotify
       'fixed_version_id' => '目标版本',
       'description' => '描述',
       'done_ratio' => '完成度',
-      'estimated_hours' => '预期时间'
+      'estimated_hours' => '预期时间',
+      'notes' => '说明'
     }.freeze
 
     # 老配置里还没有这两个键时的默认值
@@ -70,7 +71,7 @@ module RedmineWecomNotify
         if changes.key?(field)
           lines << "> #{field_label(field)}：#{changes[field]}"
         else
-          value = field_value(issue, field)
+          value = field_value(issue, field, journal)
           lines << "> #{field_label(field)}：#{value.presence || '未填写'}"
         end
       end
@@ -154,7 +155,7 @@ module RedmineWecomNotify
     end
 
     # 新建问题时的字段取值
-    def field_value(issue, field)
+    def field_value(issue, field, journal = nil)
       case field
       when 'status_id' then issue.status&.name
       when 'assigned_to_id' then name_with_mention(issue.assigned_to) || '未指派'
@@ -165,6 +166,7 @@ module RedmineWecomNotify
       when 'fixed_version_id' then issue.fixed_version&.name
       when 'project_id' then issue.project&.name
       when 'description' then truncate_text(issue.description)
+      when 'notes' then truncate_text(journal&.notes)
       when 'start_date', 'due_date' then issue.send(field) || '未设置'
       else
         if issue.respond_to?(field)
