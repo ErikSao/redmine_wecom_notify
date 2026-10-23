@@ -16,8 +16,8 @@ Redmine 企业微信群机器人通知插件。新建问题、问题变更和超
 
 **环境要求**
 
-- Redmine 6.0 及以上（在 Redmine 6.1.4 上验证）
-- Ruby 3.1 及以上（在 Ruby 4.0.1 上验证）
+- Redmine 6.0 及以上（已在 Redmine 6.1.4 上验证）
+- Ruby 3.1 及以上
 - 企业微信群机器人 Webhook（不需要 corpid / secret / agentid）
 
 **安装步骤**
@@ -26,20 +26,12 @@ Redmine 企业微信群机器人通知插件。新建问题、问题变更和超
 
 ```bash
 cd ${REDMINE_ROOT}/plugins
-sudo -u redmine git clone https://gitee.com/eriksao/redmine_wecom_notify.git
-sudo chown -R redmine:redmine redmine_wecom_notify
+git clone https://github.com/ErikSao/redmine_wecom_notify.git
 ```
 
-也可以下载 ZIP 解压到 `${REDMINE_ROOT}/plugins/`，目录名必须是 `redmine_wecom_notify`。
+请以运行 Redmine 的用户执行；如果用了其他用户克隆，记得把目录归属改成运行 Redmine 的用户。也可以下载 ZIP 解压到 `${REDMINE_ROOT}/plugins/`，目录名必须是 `redmine_wecom_notify`。
 
-2. 重启 Redmine：
-
-```bash
-sudo /opt/nginx/sbin/nginx -t
-sudo /opt/nginx/sbin/nginx -s stop
-sleep 2
-sudo /opt/nginx/sbin/nginx
-```
+2. 按你的部署方式重启 Redmine，例如重启 Nginx + Passenger、Puma、IIS 应用池等。
 
 插件没有数据表，不需要执行 `redmine:plugins:migrate`；没有静态资源，不需要重新预编译。
 
@@ -59,7 +51,7 @@ sudo /opt/nginx/sbin/nginx
 | 按跟踪类型的变更显示字段 | 按跟踪类型覆盖变更消息字段 |
 | 按跟踪类型的变更触发字段 | 哪些字段变化才发送变更消息 |
 
-消息里的「查看详情」链接使用 Redmine 的「管理 → 配置 → 常规 → 协议 + 主机名称」。主机名称需要带端口，例如 `192.168.224.49:3001`，否则生成的链接无法从其他电脑打开。
+消息里的「查看详情」链接使用 Redmine 的「管理 → 配置 → 常规 → 协议 + 主机名称」。主机名称需要带端口，例如 `redmine.example.com:3000`，否则生成的链接无法从其他电脑打开。
 
 ### 字段标识
 
@@ -127,22 +119,34 @@ zhangsan: ZhangSan
 
 ```bash
 cd ${REDMINE_ROOT}
-sudo -u redmine bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=production
+bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=production
 ```
 
-每天 9 点执行（加到 redmine 用户的 crontab）：
+请以运行 Redmine 的用户执行。每天 9 点执行（加到对应用户的 crontab）：
 
 ```cron
-0 9 * * * cd /opt/redmine && /opt/redmine/.rbenv/shims/bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=production >> /opt/redmine/log/wecom_overdue.log 2>&1
+0 9 * * * cd /path/to/redmine && /path/to/bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=production >> /path/to/redmine/log/wecom_overdue.log 2>&1
 ```
+
+把 `/path/to/redmine` 和 `/path/to/bundle` 换成实际路径。使用 rbenv 时，bundle 通常在 `~/.rbenv/shims/bundle` 或 `${REDMINE_ROOT}/.rbenv/shims/bundle`。
 
 判定条件：状态未关闭，且计划完成时间早于今天或为空。
 
 ## 📸 截图
 
-> 截图位置：`doc/images/example.png`，放入图片后取消下方注释。
+### 消息效果
 
-<!-- ![企业微信通知示例](doc/images/example.png) -->
+| 新建问题 | 问题变更 |
+| --- | --- |
+| ![新建问题通知](doc/images/new-issue.png) | ![问题变更通知](doc/images/issue-change.png) |
+
+### 插件配置
+
+![插件配置页面](doc/images/settings.png)
+
+### 插件列表
+
+![插件列表](doc/images/plugins.png)
 
 ## 💬 消息示例
 
@@ -157,7 +161,7 @@ sudo -u redmine bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=producti
 > 主题：登录页验证码优化
 > 状态：新建
 > 计划完成时间：2026-10-30
-[查看详情](http://192.168.1.10:3001/issues/1024)
+[查看详情](https://redmine.example.com/issues/1024)
 ```
 
 问题变更：
@@ -203,7 +207,7 @@ sudo -u redmine bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=producti
 
 **查看详情链接打不开**
 
-检查「管理 → 配置 → 常规」里的协议和主机名称，主机名称必须带端口，例如 `192.168.224.49:3001`。
+检查「管理 → 配置 → 常规」里的协议和主机名称，主机名称必须带端口，例如 `redmine.example.com:3000`。
 
 **定时任务不触发**
 
