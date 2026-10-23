@@ -97,7 +97,7 @@ module RedmineWecomNotify
           due_text = issue.due_date.to_s
           overdue_text = "已超期 #{(Date.today - issue.due_date).to_i} 天"
         end
-        lines << "> [#{issue.project.name}] ##{issue.id} #{issue.subject}"
+        lines << "> [#{issue.project.name}] [##{issue.id} #{issue.subject}](#{issue_url(issue)})"
         lines << "> 作者：#{name_with_mention(issue.author) || '未知'} 指派人：#{name_with_mention(issue.assigned_to) || '未指派'}　计划完成：#{due_text}　#{overdue_text}"
       end
       send_lines(lines)
@@ -322,8 +322,12 @@ module RedmineWecomNotify
       @wecom_userids
     end
 
+    def issue_url(issue)
+      "#{base_url}/issues/#{issue.id}"
+    end
+
     def link(issue)
-      "[查看详情](#{base_url}/issues/#{issue.id})"
+      "[查看详情](#{issue_url(issue)})"
     end
 
     # 查看详情链接使用 Redmine 的「协议 + 主机名称」设置

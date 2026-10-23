@@ -180,7 +180,7 @@ bundle exec rake redmine:wecom_notify:overdue RAILS_ENV=production
 ```text
 **<font color="warning">超期工单问题</font>**
 > 共 2 个问题超过计划完成时间
-> [ERP 平台] #1024 登录页验证码优化
+> [ERP 平台] [#1024 登录页验证码优化](https://redmine.example.com/issues/1024)
 > 作者：@张三 指派人：@李四　计划完成：2026-10-18　已超期 2 天
 ```
 
