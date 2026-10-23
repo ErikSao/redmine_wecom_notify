@@ -35,6 +35,15 @@ git clone https://github.com/ErikSao/redmine_wecom_notify.git
 
 插件没有数据表，不需要执行 `redmine:plugins:migrate`；没有静态资源，不需要重新预编译。
 
+### 升级
+
+```bash
+cd ${REDMINE_ROOT}/plugins/redmine_wecom_notify
+git pull
+```
+
+然后重启 Redmine。插件没有数据库迁移和静态资源，通常不需要额外命令。
+
 ## ⚙️ 基本配置
 
 安装后进入「管理 → 插件 → Redmine WeCom Notify → 配置」。
