@@ -30,8 +30,25 @@
                     :rows => 8, :cols => 40 %>
 </p>
 
+<p>
+  <label for="settings_create_fields_by_tracker">按跟踪类型的新建字段</label>
+  <%= text_area_tag 'settings[create_fields_by_tracker]', @settings['create_fields_by_tracker'], :rows => 8, :cols => 60 %>
+</p>
+
+<p>
+  <label for="settings_change_fields_by_tracker">按跟踪类型的变更显示字段</label>
+  <%= text_area_tag 'settings[change_fields_by_tracker]', @settings['change_fields_by_tracker'], :rows => 8, :cols => 60 %>
+</p>
+
+<p>
+  <label for="settings_change_trigger_fields_by_tracker">按跟踪类型的变更触发字段</label>
+  <%= text_area_tag 'settings[change_trigger_fields_by_tracker]', @settings['change_trigger_fields_by_tracker'], :rows => 8, :cols => 60 %>
+</p>
+
 <p class="info">
   企业微信群 → 群设置 → 群机器人 → 添加机器人，复制 Webhook 地址粘贴到这里。<br>
   用户映射每行一条，格式 <code>登录名: userid</code>，以 # 开头的行是注释。<br>
-  字段列表每行一个，系统字段写属性名（如 <code>status_id</code>、<code>due_date</code>），自定义字段直接写字段名称。
+  通用字段每行一个；按跟踪类型配置每行一条，格式 <code>跟踪名称: 字段1, 字段2</code>，<code>*</code> 表示默认行。<br>
+  变更触发字段留空时，沿用该跟踪类型的变更显示字段。<br>
+  当前跟踪类型：<%= Tracker.sorted.map(&:name).join('、') %>
 </p>

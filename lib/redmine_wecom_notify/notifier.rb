@@ -36,7 +36,7 @@ module RedmineWecomNotify
       lines << "> 项目：#{issue.project.name}"
       lines << "> 编号：##{issue.id}"
 
-      field_list('create_fields').each do |field|
+      create_fields_for(issue).each do |field|
         value = field_value(issue, field)
         lines << "> #{field_label(field)}：#{value.presence || '未填写'}"
       end
@@ -47,21 +47,26 @@ module RedmineWecomNotify
 
     # 问题变更：一次保存只发一条，列出所有被跟踪字段的前后值
     def issue_changed(issue, journal)
-      allowed = field_list('change_fields')
+      display = change_fields_for(issue)
+      trigger = trigger_fields_for(issue)
+
       changes = {}
       journal.details.each do |detail|
         field = detail_field(detail)
-        next if field.nil? || !allowed.include?(field)
+        next if field.nil?
+        next unless display.include?(field) || trigger.include?(field)
 
         changes[field] =
           "#{display_value(detail.old_value, detail)} → #{display_value(detail.value, detail, mention: true)}"
       end
-      return if changes.empty?
+
+      triggered = changes.keys & trigger
+      return if triggered.empty?
 
       lines = ['**问题变更**']
       lines << "> 项目：#{issue.project.name}"
       lines << "> 编号：##{issue.id}"
-      allowed.each do |field|
+      (display | triggered).each do |field|
         if changes.key?(field)
           lines << "> #{field_label(field)}：#{changes[field]}"
         else
@@ -107,6 +112,41 @@ module RedmineWecomNotify
 
     def plugin_settings
       Setting.plugin_redmine_wecom_notify || {}
+    end
+
+    # 解析「跟踪名称: 字段1, 字段2」格式的按跟踪类型配置
+    def field_rules(key)
+      rules = {}
+      plugin_settings[key].to_s.each_line do |line|
+        text = line.strip
+        next if text.empty? || text.start_with?('#')
+
+        name, fields = text.split(/[:：]/, 2)
+        next if name.nil? || fields.nil?
+
+        rules[name.strip] = fields.split(/[,，]/).map(&:strip).reject(&:empty?)
+      end
+      rules
+    end
+
+    def create_fields_for(issue)
+      tracker_fields_for(issue, 'create_fields_by_tracker', 'create_fields')
+    end
+
+    def change_fields_for(issue)
+      tracker_fields_for(issue, 'change_fields_by_tracker', 'change_fields')
+    end
+
+    def trigger_fields_for(issue)
+      rules = field_rules('change_trigger_fields_by_tracker')
+      name = issue.tracker&.name.to_s
+      rules[name] || rules['*'] || change_fields_for(issue)
+    end
+
+    def tracker_fields_for(issue, key, fallback_key)
+      rules = field_rules(key)
+      name = issue.tracker&.name.to_s
+      rules[name] || rules['*'] || field_list(fallback_key)
     end
 
     def field_label(field)

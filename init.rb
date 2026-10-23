@@ -11,6 +11,9 @@ Redmine::Plugin.register :redmine_wecom_notify do
     'webhook_url' => '',
     'base_url' => '',
     'user_map' => '',
+    'create_fields_by_tracker' => '',
+    'change_fields_by_tracker' => '',
+    'change_trigger_fields_by_tracker' => '',
     'create_fields' => "author_id\ntracker_id\nsubject\nstatus_id\npriority_id\nassigned_to_id\ndue_date\n是否推广\n测试员\n期望测试完成时间",
     'change_fields' => "status_id\nsubject\nassigned_to_id\n是否推广\n设计变更\n变更协同审视单号"
   },
