@@ -326,11 +326,8 @@ module RedmineWecomNotify
       "[查看详情](#{base_url}/issues/#{issue.id})"
     end
 
-    # 优先用配置页的站点地址，未配置时回退到 Redmine 的协议 + 主机名
+    # 查看详情链接使用 Redmine 的「协议 + 主机名称」设置
     def base_url
-      configured = plugin_settings['base_url'].to_s.strip
-      return configured.chomp('/') if configured.present?
-
       root = Redmine::Utils.relative_url_root.to_s
       "#{Setting.protocol}://#{Setting.host_name}#{root}"
     end

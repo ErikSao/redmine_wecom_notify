@@ -3,13 +3,14 @@ require_relative 'lib/redmine_wecom_notify/hooks'
 
 Redmine::Plugin.register :redmine_wecom_notify do
   name 'Redmine WeCom Notify'
-  author 'eriksao'
+  author 'ErikSao'
+  author_url 'https://github.com/ErikSao/redmine_wecom_notify'
+  url 'https://github.com/ErikSao/redmine_wecom_notify'
   description '新建问题、字段变更、超期提醒推送到企业微信群机器人'
   version '0.1.0'
 
   settings default: {
     'webhook_url' => '',
-    'base_url' => '',
     'user_map' => '',
     'create_fields_by_tracker' => '',
     'change_fields_by_tracker' => '',

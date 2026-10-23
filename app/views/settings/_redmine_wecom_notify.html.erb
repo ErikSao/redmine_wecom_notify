@@ -4,12 +4,6 @@
 </p>
 
 <p>
-  <label for="settings_base_url">站点地址（用于查看详情链接）</label>
-  <%= text_field_tag 'settings[base_url]', @settings['base_url'], :size => 60,
-                     :placeholder => 'http://192.168.224.49:3001' %>
-</p>
-
-<p>
   <label for="settings_user_map">用户映射（Redmine 登录名 → 企业微信 userid）</label>
   <%= text_area_tag 'settings[user_map]', @settings['user_map'], :rows => 6, :cols => 60 %>
 </p>
