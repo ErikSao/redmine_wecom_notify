@@ -22,6 +22,9 @@ module RedmineWecomNotify
       'description' => '描述',
       'done_ratio' => '完成度',
       'estimated_hours' => '预期时间',
+      'spent_hours' => '总耗时',
+      'total_spent_hours' => '总耗时（含子任务）',
+      'total_estimated_hours' => '预期时间合计',
       'notes' => '说明'
     }.freeze
 
@@ -167,6 +170,8 @@ module RedmineWecomNotify
       when 'project_id' then issue.project&.name
       when 'description' then truncate_text(issue.description)
       when 'notes' then truncate_text(journal&.notes)
+      when 'estimated_hours', 'spent_hours', 'total_spent_hours', 'total_estimated_hours'
+        format_hours(issue.send(field))
       when 'start_date', 'due_date' then issue.send(field) || '未设置'
       else
         if issue.respond_to?(field)
@@ -229,8 +234,16 @@ module RedmineWecomNotify
       when 'category_id' then IssueCategory.find_by(:id => value)&.name || value.to_s
       when 'fixed_version_id' then Version.find_by(:id => value)&.name || value.to_s
       when 'project_id' then Project.find_by(:id => value)&.name || value.to_s
+      when 'estimated_hours' then format_hours(value) || value.to_s
       else value.to_s.truncate(200)
       end
+    end
+
+    def format_hours(value)
+      return nil if value.nil?
+
+      number = value.to_f
+      number == number.to_i ? number.to_i.to_s : number.to_s
     end
 
     def truncate_text(text)

@@ -82,10 +82,15 @@ git pull
 | 说明（编辑时的批注） | `notes` |
 | 完成度 | `done_ratio` |
 | 预期时间 | `estimated_hours` |
+| 总耗时 | `spent_hours` |
+| 总耗时（含子任务） | `total_spent_hours` |
+| 预期时间合计 | `total_estimated_hours` |
 
 自定义字段示例：`是否推广`、`测试员`、`期望测试完成时间`、`变更协同审视单号`。
 
 `notes` 来自编辑问题时的「说明」批注（`journal.notes`），只能在变更显示字段里配置用于展示，不能作为触发字段。
+
+`spent_hours` / `total_spent_hours` 由工时记录汇总，`estimated_hours` / `total_estimated_hours` 是预期工时；总耗时类字段只能展示，不能作为触发字段，登记工时不产生 issue 的字段变更明细。
 
 ### 按跟踪类型配置
 
